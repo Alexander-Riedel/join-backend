@@ -4,6 +4,10 @@ from rest_framework import status
 from .models import StorageItem
 from .serializers import StorageItemSerializer
 
+from rest_framework import viewsets
+from .models import User
+from .serializers import UserSerializer
+
 
 @api_view(['POST'])
 def set_item(request):
@@ -30,3 +34,8 @@ def get_item(request):
         return Response(serializer.data)
     except StorageItem.DoesNotExist:
         return Response({'error': 'Item not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
