@@ -17,3 +17,24 @@ class User(models.Model):
 
     def __str__(self):
         return self.name
+    
+
+class Task(models.Model):
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    assigned = models.ManyToManyField(User, related_name='tasks', blank=True)  # Zuordnung zu Usern
+    due_date = models.DateField()
+    priority = models.CharField(max_length=20)
+    category = models.CharField(max_length=100)
+    bucket = models.CharField(max_length=50, default='todo')
+
+    def __str__(self):
+        return self.title
+
+class SubTask(models.Model):
+    task = models.ForeignKey(Task, related_name='subtasks', on_delete=models.CASCADE)
+    subtitle = models.CharField(max_length=255)
+    subdone = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.subtitle} ({'Done' if self.subdone else 'Open'})"
