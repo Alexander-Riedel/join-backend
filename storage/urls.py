@@ -1,8 +1,7 @@
-from rest_framework.routers import DefaultRouter
-from .views import UserViewSet, TaskViewSet
+from django.urls import path
+from . import views
 
-router = DefaultRouter()
-router.register(r'users', UserViewSet)
-router.register(r'tasks', TaskViewSet)
-
-urlpatterns = router.urls
+urlpatterns = [
+    path('item', views.set_item),
+    path('item/', views.get_item),
+]
