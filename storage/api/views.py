@@ -17,11 +17,23 @@ class StorageItemView(APIView):
             return Response({'status': 'success', 'data': serializer.data})
         except StorageItem.DoesNotExist:
             return Response({'status': 'error', 'message': 'Item not found'}, status=status.HTTP_404_NOT_FOUND)
-        
-    def post(self, request):
-        serializer = StorageItemSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({'status': 'success', 'data': serializer.data}, status=status.HTTP_201_CREATED)
-        return Response({'status': 'error', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
+    def post(self, request):
+        key = request.data.get('key')
+        value = request.data.get('value')
+
+        if not key or not value:
+            return Response({'status': 'error', 'message': 'Missing key or value'}, status=status.HTTP_400_BAD_REQUEST)
+
+        item, created = StorageItem.objects.update_or_create(
+            key=key,
+            defaults={'value': value}
+        )
+
+        return Response({
+            'status': 'success',
+            'data': {
+                'key': item.key,
+                'value': item.value
+            }
+        }, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
